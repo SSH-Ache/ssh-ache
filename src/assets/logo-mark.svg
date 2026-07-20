@@ -1,0 +1,13 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SSH Ache logo">
+  <defs>
+    <linearGradient id="ache-bg" x1="20" y1="12" x2="236" y2="244" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff8a63"/>
+      <stop offset="0.55" stop-color="#ff5f6d"/>
+      <stop offset="1" stop-color="#ff3d7f"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#ache-bg)"/>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#ffffff" opacity="0.05"/>
+  <path d="M88 86 L140 128 L88 170" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="132" y="152" width="52" height="20" rx="10" fill="#ffffff"/>
+</svg>

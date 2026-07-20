@@ -1,0 +1,10 @@
+node_modules
+dist
+src-tauri/target
+src-tauri/gen
+*.log
+.DS_Store
+.claude/settings.local.json
+# Claude Design raw handoff reference (not part of the build)
+.design-handoff/
+Local-first terminal application-handoff.zip

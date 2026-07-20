@@ -1,0 +1,33 @@
+[package]
+name = "sshache"
+version = "0.1.0"
+description = "Local-only SSH client"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+russh = "0.61"
+russh-sftp = "2"
+portable-pty = "0.8"
+tiny_http = "0.12"
+
+# OS keychain mirror — per-platform native backend (the primary store is the
+# 0600 secrets.json, so this is best-effort everywhere).
+[target.'cfg(target_os = "macos")'.dependencies]
+keyring = { version = "3", features = ["apple-native"] }
+[target.'cfg(target_os = "windows")'.dependencies]
+keyring = { version = "3", features = ["windows-native"] }
+[target.'cfg(target_os = "linux")'.dependencies]
+keyring = { version = "3", features = ["sync-secret-service"] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

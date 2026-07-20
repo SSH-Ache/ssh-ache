@@ -1,0 +1,18 @@
+<svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SSH Ache">
+  <defs>
+    <linearGradient id="wm-bg" x1="28" y1="22" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff8a63"/>
+      <stop offset="0.55" stop-color="#ff5f6d"/>
+      <stop offset="1" stop-color="#ff3d7f"/>
+    </linearGradient>
+    <linearGradient id="wm-text" x1="188" y1="40" x2="600" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff8a63"/>
+      <stop offset="1" stop-color="#ff3d7f"/>
+    </linearGradient>
+  </defs>
+  <rect x="20" y="20" width="120" height="120" rx="30" fill="url(#wm-bg)"/>
+  <rect x="20" y="20" width="120" height="120" rx="30" fill="#ffffff" opacity="0.05"/>
+  <path d="M62 56 L96 80 L62 104" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="90" y="92" width="30" height="12" rx="6" fill="#ffffff"/>
+  <text x="172" y="102" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="60" font-weight="700" letter-spacing="-1" fill="url(#wm-text)">SSH Ache</text>
+</svg>
