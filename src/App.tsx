@@ -951,7 +951,7 @@ export default class App extends React.Component<any, any> {
     if (this.state.updateChecking) return;
     this.setState({ updateChecking: true });
     try {
-      const res = await fetch('https://api.github.com/repos/TanvirMahin24/sshache/releases/latest', { headers: { Accept: 'application/vnd.github+json' } });
+      const res = await fetch('https://api.github.com/repos/SSH-Ache/ssh-ache/releases/latest', { headers: { Accept: 'application/vnd.github+json' } });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const j = await res.json();
       const latest = String(j.tag_name || '').replace(/^v/, '');
