@@ -1,0 +1,107 @@
+name: homebrew
+
+# When a GitHub Release is published, regenerate the Homebrew cask in the tap
+# repo (SSH-Ache/homebrew-sshache) so `brew install --cask
+# SSH-Ache/sshache/sshache` always points at the newest macOS build.
+# (This community edition owns the `sshache` cask; the Teams build is `sshache-teams`.)
+#
+# Prerequisites (one-time):
+#   1. Create the tap repo: https://github.com/SSH-Ache/homebrew-sshache
+#   2. Add a repo secret HOMEBREW_TAP_TOKEN — a PAT with `contents:write` on
+#      that tap repo (classic `repo` scope, or a fine-grained token).
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  cask:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAP_REPO: SSH-Ache/homebrew-sshache
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      # Homebrew publishing is optional and needs a tap + HOMEBREW_TAP_TOKEN (see header). When the
+      # secret isn't configured, skip the job cleanly instead of failing the whole release.
+      - name: Check for tap token
+        id: gate
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${HOMEBREW_TAP_TOKEN:-}" ]; then
+            echo "::warning::HOMEBREW_TAP_TOKEN not set — skipping Homebrew cask update. Add the secret (see workflow header) to enable it."
+            echo "### Homebrew cask skipped — HOMEBREW_TAP_TOKEN not configured" >> "$GITHUB_STEP_SUMMARY"
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve macOS asset + checksum
+        id: asset
+        if: steps.gate.outputs.has_token == 'true'
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          # Pick the universal .dmg from the release assets.
+          url=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --json assets \
+            --jq '.assets[] | select(.name | endswith(".dmg")) | .url' | head -n1)
+          if [ -z "$url" ]; then
+            echo "::error::No .dmg asset found on release $TAG"; exit 1
+          fi
+          echo "Downloading $url"
+          curl -sSL "$url" -o app.dmg
+          sha=$(sha256sum app.dmg | cut -d' ' -f1)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "url=$url"         >> "$GITHUB_OUTPUT"
+          echo "sha=$sha"         >> "$GITHUB_OUTPUT"
+
+      - name: Render and push cask
+        if: steps.gate.outputs.has_token == 'true'
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          VERSION: ${{ steps.asset.outputs.version }}
+          ASSET_URL: ${{ steps.asset.outputs.url }}
+          ASSET_SHA: ${{ steps.asset.outputs.sha }}
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/${TAP_REPO}.git" tap
+          mkdir -p tap/Casks
+          cat > tap/Casks/sshache.rb <<EOF
+          cask "sshache" do
+            version "${VERSION}"
+            sha256 "${ASSET_SHA}"
+
+            url "${ASSET_URL}"
+            name "SSH Ache"
+            desc "Fast, local-first, open-source SSH client: terminal, SFTP, port forwarding"
+            homepage "https://github.com/SSH-Ache/ssh-ache"
+
+            app "SSH Ache.app"
+
+            zap trash: [
+              "~/.ssh-ache",
+              "~/Library/Preferences/com.sshache.app.plist",
+              "~/Library/Saved Application State/com.sshache.app.savedState",
+            ]
+          end
+          EOF
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/sshache.rb
+          if git diff --cached --quiet; then
+            echo "Cask already up to date."
+          else
+            git commit -m "sshache ${VERSION}"
+            git push
+          fi
