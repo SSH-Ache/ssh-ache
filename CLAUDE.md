@@ -22,14 +22,38 @@ Teams/cloud variant is the private `ssh-ache-teams` repo.)
   text, passphrases, vault keys) in the **OS keychain** via `secret_get`/`secret_set`/`secret_delete`,
   keyed by host id / `key:<id>`.
 
+## Workspaces
+A **workspace** is a saved tab: one arrangement preset (`LAYOUTS` in `src/App.tsx`) plus one
+connection per pane slot. It lives in `state.workspaces` (persisted with `hosts`) and shows up on
+the dashboard as its own card kind — there is deliberately **no separate workspaces page**.
+- Shape: `{ id, name, folder, tags[], layoutId, slots[], favorite, lastUsed }`; a slot is
+  `{ hostId, connId, name, addr, user, port }`, `{ local: true }`, or `null` (empty pane).
+  `_hostForSlot` resolves hostId → connId → addr/user/port → name, so a workspace survives
+  export/import (new ids) and, in the Teams build, a different device.
+- Ids come from `genId()` — the same space as hosts, which is why `_bumpUid` counts both.
+- `applyLayout` adds **empty** panes (a `PanePicker` inside the pane); `⌘D`/split still clones the
+  current host. Drag a tab pill onto a pane → `dropZoneAt` picks the half, `mergeTabIntoPane` folds
+  it in (moved panes get fresh `sessionId`s — React remounts them, so the old sessions close) and
+  then offers to save the arrangement.
+- Export/import reuses the single-connection `ioPrompt` flow (`exportWs` / `import1` auto-detects
+  the kind). Member connections travel with it; **their secrets only when a password is set**.
+
 ## Conventions & gotchas
 - **`src/App.tsx` starts with `// @ts-nocheck`** and builds via Vite/esbuild — **`tsc` does NOT
   typecheck it.** The only hard build-breaker is an unresolved import. **Verify with `npm run
   build`** (esbuild catches syntax/import errors), not tsc.
 - Match the existing style: inline `css("…")` style helper, `Hov` hover wrapper, class-component
   `this.setState`. Dense but consistent.
+- **Never hardcode the accent (`#ff7a59`) in a style object.** `css("…")` strings and `Hov`'s
+  `s=`/`h=` are remapped to CSS variables automatically; a raw `style={{…}}` object is not, so a
+  literal hex there stays orange under every other theme. Use `var(--accent)` /
+  `rgba(var(--accent-rgb),…)` / `var(--accent-ink)` directly in objects (hex is fine for palette
+  *data*: `THEMES`, `folderPalette`, saved trigger colours).
 - **Do not add cloud/backend/teams features here.** This is the local-only community edition
-  (Apache-2.0). Anything that talks to a server belongs in `ssh-ache-teams`.
+  (Apache-2.0). Anything that talks to a server belongs in `ssh-ache-teams`. The one Teams thing
+  that lives here is the **promo** (`TeamsBanner` / `TeamsRail` in `src/App.tsx`) — an ad that
+  opens `sshache.com` in the browser. No account, no sidebar nav item, no network call: keep it
+  that way.
 - The MCP agent bridge is off by default, localhost-only, bearer-token, per-command approval —
   preserve those guarantees if you touch `mcp_*`. See `docs/MCP.md`.
 
