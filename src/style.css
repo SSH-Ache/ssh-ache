@@ -160,6 +160,61 @@ body {
 .aca-resizer:hover .aca-rzbar {
   background: var(--accent);
 }
+/* SSH Ache Teams promo: a slow sheen across the card, and each rotating feature
+   sliding in as it swaps (the element is re-keyed per feature, so this replays). */
+.aca-ad {
+  position: relative;
+  overflow: hidden;
+}
+.aca-ad::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 42%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(183, 155, 255, 0.14),
+    transparent
+  );
+  animation: acaAdSweep 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes acaAdSweep {
+  0% {
+    left: -60%;
+  }
+  55%,
+  100% {
+    left: 125%;
+  }
+}
+.aca-adline {
+  animation: acaAdLine 0.42s ease both;
+}
+@keyframes acaAdLine {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.aca-addot {
+  transition:
+    width 0.32s ease,
+    background 0.32s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aca-ad::after,
+  .aca-adline {
+    animation: none;
+  }
+}
 /* Gentle float for the empty-state welcome logo. */
 .aca-float {
   animation: acaFloat 4s ease-in-out infinite;
