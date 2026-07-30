@@ -255,12 +255,14 @@ function LayoutThumb({ preset, w = 30 }: any) {
 // ---- SSH Ache Teams promo ----------------------------------------------
 // This edition stays local-only (see CLAUDE.md): the promo is a link-out ad for the separate
 // Teams app — no account, no backend call, nothing to sign into. It only ever opens a URL.
-const TEAMS_URL = "https://sshache.com";
+// ?ref lets the site separate "came from the community app" from every other channel. It is a
+// static string in the URL — no id, no install fingerprint, nothing that identifies this copy.
+const TEAMS_URL = "https://sshache.com/?ref=community-app";
 const TEAMS_HUE = { accent: "#8b7bff", accentHi: "#b79bff", grad: "linear-gradient(135deg,#7c6cff,#b455f7)", soft: "rgba(139,123,255,.10)", line: "rgba(139,123,255,.32)" };
 const TEAMS_FEATURES = [
   { icon: "🔐", title: "Share connections, end-to-end encrypted", body: "Teammates get the server — the cloud only ever stores ciphertext." },
   { icon: "🟢", title: "Live presence & session spectate", body: "See who's on a box right now, and watch their terminal, Figma-style." },
-  { icon: "🎫", title: "Per-connection access grants", body: "Hand out one server for an afternoon; revoke anyone in one click." },
+  { icon: "🔄", title: "Remove a member, key rotates", body: "Offboarding re-seals the vault — the leaver's copy stops working immediately." },
   { icon: "☁️", title: "Personal cloud vault", body: "Your own hosts, on every device you sign in on." },
   { icon: "🧾", title: "Audit trail", body: "Who pulled which secret, and when — exportable." },
 ];
@@ -898,7 +900,9 @@ export default class App extends React.Component<any, any> {
     themeId: 'ember',
     tourSeen: false,
     tourStep: 0,
-    appVersion: '0.0.0',
+    // Baked in by vite (define). Tauri's getVersion() still overrides it on mount — this is what
+    // shows before that resolves, and the only source when the frontend runs in a browser.
+    appVersion: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0',
     update: null,        // null | { version, url, asset }
     updateChecking: false,
     view: 'dashboard',

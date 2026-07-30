@@ -17,9 +17,7 @@
 
 > **Community edition.** A fully local, open-source SSH client — everything runs on your machine, nothing is uploaded, no account required. **SSH Ache Teams**, an optional way to share connections with your team end-to-end encrypted, is a separate product.
 
-<!-- Add a product screenshot at docs/screenshot.png, then uncomment:
-<p align="center"><img src="docs/screenshot.png" width="820" alt="SSH Ache screenshot"></p>
--->
+<p align="center"><img src="docs/screenshot.png" width="820" alt="The SSH Ache dashboard: saved connections grouped into folders, tags, and a saved four-pane workspace"></p>
 
 ## Features
 
