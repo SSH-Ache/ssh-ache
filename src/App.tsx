@@ -411,6 +411,10 @@ const MCP_URL = `http://127.0.0.1:${MCP_PORT}/mcp`;
 
 // "What's new" changelog. Newest first; add an entry at the top when cutting a release.
 const CHANGELOG = [
+  { version: '0.8.1', items: [
+    'The Teams panel no longer advertises per-connection access grants — that feature has no screen yet, so the card now shows what actually ships: removing a member re-seals the team vault, and their copy stops working immediately.',
+    'Fixed: the app briefly showed “v0.0.0” on launch before the real version loaded.',
+  ] },
   { version: '0.8.0', items: [
     'Workspaces — arrange a tab into columns, rows, a main+stack split or a 2×2 grid, give each pane a different connection, then save the whole thing. It reopens from the dashboard as one click.',
     'Drag a tab onto a pane to fold it in as a split: hover shows exactly where it will land, and dropping offers to save the arrangement.',
