@@ -40,6 +40,12 @@
 
 ## Install
 
+### Homebrew (macOS)
+
+```sh
+brew install --cask SSH-Ache/sshache/sshache
+```
+
 ### Direct download
 
 Grab the latest platform build — `.dmg` (macOS), `.msi` (Windows), or `.AppImage` / `.deb` (Linux) — from the [Releases](https://github.com/SSH-Ache/ssh-ache/releases) page.

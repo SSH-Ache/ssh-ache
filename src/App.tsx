@@ -399,6 +399,13 @@ const MCP_URL = `http://127.0.0.1:${MCP_PORT}/mcp`;
 
 // "What's new" changelog. Newest first; add an entry at the top when cutting a release.
 const CHANGELOG = [
+  { version: '0.9.0', items: [
+    'Reconnect on drop — when a session times out or the network goes, the pane stays put and a “Connection lost” prompt offers Reconnect (same host, fresh shell, tab and scrollback intact) or Close tab. Every dropped pane gets its own prompt.',
+    'Fixed: on Windows, every storage path failed when HOME was unset — the app now looks at USERPROFILE too.',
+    'Secrets are written to a 0600 file (owner-only), and an empty password no longer counts as an unlocked keychain.',
+    'SFTP uploads stream in chunks instead of buffering the whole file in memory, so large transfers no longer spike RAM.',
+    'Hardened the app’s content security policy, and encrypted backup now has automated tests over the export/import round trip.',
+  ] },
   { version: '0.8.1', items: [
     'The Teams panel no longer advertises per-connection access grants — that feature has no screen yet, so the card now shows what actually ships: removing a member re-seals the team vault, and their copy stops working immediately.',
     'Fixed: the app briefly showed “v0.0.0” on launch before the real version loaded.',
